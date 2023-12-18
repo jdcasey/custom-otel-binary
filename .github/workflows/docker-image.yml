@@ -1,0 +1,26 @@
+name: Test Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  image-build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+
+    - name: OCB Build
+      run: ${GITHUB_WORKSPACE}/builder.sh
+
+    - name: Buildah Build
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: rubenmgx
+        tags: latest ${{ github.sha }}
+        containerfiles: |
+          ./Dockerfile
+
